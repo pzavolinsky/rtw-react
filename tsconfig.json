@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "noImplicitAny": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noEmitOnError": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "alwaysStrict": true,
+    "declaration": true,
+    "sourceMap": true
+  },
+  "include": ["./src/index.ts", "./src/defs.d.ts"]
+}
