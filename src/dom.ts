@@ -1,7 +1,6 @@
-type Prop = string | EventListener;
-type Props = Record<string, Prop> | null;
+import { Prop, VElem, TEXT_TYPE } from './vdom';
+
 type Elem = HTMLElement;
-type Child = Elem | string | number | boolean;
 
 const setProp = (elem: HTMLElement, name: string, value: Prop) => {
   if (typeof value === 'function') {
@@ -11,13 +10,7 @@ const setProp = (elem: HTMLElement, name: string, value: Prop) => {
   }
 };
 
-const flatten = <T>(items: (T | T[])[]) => ([] as T[]).concat(...items);
-
-export const createElement = (
-  type: string,
-  props: Props = null,
-  ...children: (Child | Child[])[]
-): Elem => {
+export const render = ({ type, props, children }: VElem): Elem => {
   const elem = document.createElement(type);
 
   if (props) {
@@ -26,9 +19,11 @@ export const createElement = (
     );
   }
 
-  flatten(children).forEach(child =>
+  children.forEach(child =>
     elem.appendChild(
-      typeof child === 'object' ? child : document.createTextNode(`${child}`),
+      child.type === TEXT_TYPE
+        ? document.createTextNode(`${child.props?.value}`)
+        : render(child),
     ),
   );
 

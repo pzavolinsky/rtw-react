@@ -2,6 +2,7 @@ const root = document.getElementById('root');
 if (!root) throw new Error('root not found');
 
 import App from './app';
+import { render } from './dom';
 
 let count = 0;
 
@@ -21,7 +22,7 @@ const update = () => {
   // Oh well, at least it works
   //
   root.innerHTML = ''; // this is a disgrace!
-  root.appendChild(App(state));
+  root.appendChild(render(App(state)));
 };
 
 update();
