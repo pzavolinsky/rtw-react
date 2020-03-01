@@ -1,7 +1,15 @@
-type Prop = string;
+type Prop = string | EventListener;
 type Props = Record<string, Prop> | null;
 type Elem = HTMLElement;
 type Child = Elem | string | number | boolean;
+
+const setProp = (elem: HTMLElement, name: string, value: Prop) => {
+  if (typeof value === 'function') {
+    elem.addEventListener(name, value, false);
+  } else {
+    elem.setAttribute(name, value);
+  }
+};
 
 const flatten = <T>(items: (T | T[])[]) => ([] as T[]).concat(...items);
 
@@ -14,7 +22,7 @@ export const createElement = (
 
   if (props) {
     Object.entries(props).forEach(([name, value]) =>
-      elem.setAttribute(name, value),
+      setProp(elem, name, value),
     );
   }
 
