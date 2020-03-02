@@ -28,3 +28,17 @@ export const createElement = (
     typeof child === 'object' ? child : createText(`${child}`),
   ),
 });
+
+export const areEqual = (a: VElem, b: VElem): boolean =>
+  a.type === b.type &&
+  equalProps(a.props, b.props) &&
+  equalChildren(a.children, b.children);
+
+export const equalProps = (a: Props, b: Props): boolean =>
+  (a === null && b === null) ||
+  (a !== null &&
+    b !== null &&
+    Object.keys({ ...a, ...b }).every(key => a[key] === b[key]));
+
+export const equalChildren = (a: VElem[], b: VElem[]): boolean =>
+  a.length === b.length && a.every((va, i) => areEqual(va, b[i]));
