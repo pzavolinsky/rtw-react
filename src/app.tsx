@@ -6,11 +6,24 @@ interface PropTypes {
   onAdd: () => void;
 }
 
+const Title = () => <h1>TODO app</h1>;
+
+const SubTitle = ({ count }: { count: number }) => (
+  <h2 style={`background: ${count % 2 === 0 ? '#ffaaaa' : '#aaffaa'}`}>
+    item count: #{count}
+  </h2>
+);
+
 const App = ({ items, onAdd }: PropTypes): VElem => (
   <div>
-    <h1>TODO app</h1>
-    <h2 style="background: #ffaaaa">Item count: #{items.length}</h2>
+    <Title />
+    <SubTitle count={items.length} />
     <button click={onAdd}>add</button>
+    <ul>
+      {items.map(text => (
+        <li>{text}</li>
+      ))}
+    </ul>
   </div>
 );
 

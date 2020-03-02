@@ -1,4 +1,11 @@
-import { VElem, Prop, TEXT_TYPE, Props } from './vdom';
+import {
+  VElem,
+  Prop,
+  TEXT_TYPE,
+  Props,
+  equalProps,
+  equalChildren,
+} from './vdom';
 
 type Elem = HTMLElement | Text;
 
@@ -21,17 +28,27 @@ const unsetProp = (elem: HTMLElement, key: string, value: Prop) => {
 };
 
 class RenderedElem {
-  private dom: Elem;
+  private ref: Elem | RenderedElem;
   private oldProps: Props = null;
   private oldChildren: VElem[] = [];
   private renderedChildren: RenderedElem[] = [];
 
   constructor(velem: VElem) {
-    this.dom =
-      velem.type === TEXT_TYPE
-        ? document.createTextNode(`${velem.props?.value as string}`)
-        : document.createElement(velem.type);
+    if (typeof velem.type === 'function') {
+      // comp
+      const newVelem = velem.type({ ...velem.props, children: velem.children });
+      this.ref = new RenderedElem(newVelem);
+    } else {
+      this.ref =
+        velem.type === TEXT_TYPE
+          ? document.createTextNode(`${velem.props?.value as string}`)
+          : document.createElement(velem.type);
+    }
     this.update(velem);
+  }
+
+  private get dom(): Elem {
+    return this.ref instanceof RenderedElem ? this.ref.dom : this.ref;
   }
 
   public static renderInto(root: HTMLElement, velem: VElem): RenderedElem {
@@ -43,6 +60,24 @@ class RenderedElem {
   update(velem: VElem) {
     const { oldProps, oldChildren } = this;
     const { props: newProps, children: newChildren } = velem;
+
+    // Comp
+    if (this.ref instanceof RenderedElem) {
+      if (typeof velem.type !== 'function') throw new Error('wtf!');
+      if (
+        !equalProps(oldProps, newProps) ||
+        !equalChildren(oldChildren, newChildren)
+      ) {
+        const newVelem = velem.type({
+          ...velem.props,
+          children: velem.children,
+        });
+        this.ref.update(newVelem);
+      }
+      this.oldProps = newProps;
+      this.oldChildren = newChildren;
+      return;
+    }
 
     const { dom } = this;
 

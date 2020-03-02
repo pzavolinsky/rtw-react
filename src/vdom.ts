@@ -1,10 +1,14 @@
 export type Prop = string | EventListener;
 export type Props = Record<string, Prop> | null;
 export interface VElem {
-  type: string;
+  type: VType;
   props: Props;
   children: VElem[];
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Component = (props: Record<string, any> & { children: VElem[] }) => VElem;
+export type VType = string | Component;
+
 type Child = VElem | string | number | boolean;
 
 export const TEXT_TYPE = '#text';
@@ -18,7 +22,7 @@ const createText = (value: string): VElem => ({
 const flatten = <T>(items: (T | T[])[]) => ([] as T[]).concat(...items);
 
 export const createElement = (
-  type: string,
+  type: VType,
   props: Props = null,
   ...children: (Child | Child[])[]
 ): VElem => ({
