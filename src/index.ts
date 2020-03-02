@@ -10,19 +10,8 @@ const state = {
   items: ['first'],
   onAdd: () => {
     state.items = [...state.items, `item ${++count}`];
-    update();
+    app.update(App(state));
   },
 };
 
-const update = () => {
-  // this update implementation sucks because we are erasing the whole DOM tree
-  // and creating everything again for each change. This is the opposite of what
-  // we want to accomplish.
-  //
-  // Oh well, at least it works
-  //
-  root.innerHTML = ''; // this is a disgrace!
-  root.appendChild(render(App(state)));
-};
-
-update();
+const app = render(root, App(state));
